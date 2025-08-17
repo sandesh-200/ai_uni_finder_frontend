@@ -25,6 +25,26 @@ const QualificationsStep = ({ formData, updateFormData, nextStep, prevStep }) =>
   ]
 
   const handleInputChange = (field, value) => {
+    // Validate test scores
+    if (field.includes('_score')) {
+      const test = englishTests.find(t => t.key === field)
+      if (test) {
+        const numValue = parseFloat(value)
+        
+        // Check for negative values
+        if (numValue < 0) {
+          setErrors(prev => ({ ...prev, [field]: `${test.name} score cannot be negative` }))
+          return
+        }
+        
+        // Check for values above maximum
+        if (numValue > test.maxScore) {
+          setErrors(prev => ({ ...prev, [field]: `${test.name} score cannot exceed ${test.maxScore}` }))
+          return
+        }
+      }
+    }
+
     updateFormData({ [field]: value })
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }))
@@ -58,6 +78,22 @@ const QualificationsStep = ({ formData, updateFormData, nextStep, prevStep }) =>
     if (!hasTestScore) {
       newErrors.english_tests = "At least one English test score is required"
     }
+
+    // Validate all selected test scores
+    Array.from(selectedTests).forEach(testKey => {
+      if (formData[testKey] && formData[testKey] !== "") {
+        const test = englishTests.find(t => t.key === testKey)
+        if (test) {
+          const numValue = parseFloat(formData[testKey])
+          
+          if (numValue < 0) {
+            newErrors[testKey] = `${test.name} score cannot be negative`
+          } else if (numValue > test.maxScore) {
+            newErrors[testKey] = `${test.name} score cannot exceed ${test.maxScore}`
+          }
+        }
+      }
+    })
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors)
