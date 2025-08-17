@@ -1,23 +1,40 @@
 import { BookOpen, MapPin, DollarSign, GraduationCap, Sparkles } from "lucide-react"
 
-const ProgressIndicator = ({ currentStep, totalSteps }) => {
+const ProgressIndicator = ({ currentStep, totalSteps, onStepClick, highestStepReached }) => {
   const steps = [
     { number: 1, title: "Course", icon: BookOpen },
-    { number: 2, title: "Country", icon: MapPin },
+    { number: 2, title: "Institution", icon: MapPin },
     { number: 3, title: "Budget", icon: DollarSign },
     { number: 4, title: "Qualifications", icon: GraduationCap },
     { number: 5, title: "Results", icon: Sparkles },
   ]
 
+  const handleStepClick = (stepNumber) => {
+    // Allow navigation to any step that has been reached
+    if (stepNumber <= highestStepReached && onStepClick) {
+      onStepClick(stepNumber)
+    }
+  }
+
   return (
     <div className="flex justify-between items-center mb-8">
       {steps.map((step, index) => {
         const IconComponent = step.icon
+        const isClickable = step.number <= highestStepReached
+        const isCurrentStep = step.number === currentStep
+        
         return (
           <div key={step.number} className="flex items-center">
             <div
+              onClick={() => handleStepClick(step.number)}
               className={`relative flex items-center justify-center w-12 h-12 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-105 ${
-                currentStep >= step.number ? "bg-blue-500 text-white shadow-md" : "bg-gray-100 text-gray-400 border border-gray-200"
+                currentStep >= step.number 
+                  ? "bg-blue-500 text-white shadow-md" 
+                  : "bg-gray-100 text-gray-400 border border-gray-200"
+              } ${
+                isClickable ? "cursor-pointer hover:shadow-lg" : "cursor-default"
+              } ${
+                isCurrentStep ? "ring-2 ring-blue-300 ring-offset-2" : ""
               }`}
             >
               <IconComponent className="w-5 h-5" />

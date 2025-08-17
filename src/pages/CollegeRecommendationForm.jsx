@@ -8,6 +8,7 @@ import ResultsStep from "../components/steps/ResultsStep"
 
 const CollegeRecommendationForm = () => {
   const [currentStep, setCurrentStep] = useState(1)
+  const [highestStepReached, setHighestStepReached] = useState(1)
   const [formData, setFormData] = useState({
     // Course fields
     course_name: "",
@@ -38,12 +39,23 @@ const CollegeRecommendationForm = () => {
     if (currentStep < totalSteps) {
       const newStep = currentStep + 1
       setCurrentStep(newStep)
+      // Update highest step reached
+      if (newStep > highestStepReached) {
+        setHighestStepReached(newStep)
+      }
     }
   }
 
   const prevStep = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1)
+    }
+  }
+
+  const navigateToStep = (stepNumber) => {
+    // Allow navigation to any step that has been reached
+    if (stepNumber >= 1 && stepNumber <= totalSteps && stepNumber <= highestStepReached) {
+      setCurrentStep(stepNumber)
     }
   }
 
@@ -94,7 +106,12 @@ const CollegeRecommendationForm = () => {
         </div>
 
         {/* Progress Indicator */}
-        <ProgressIndicator currentStep={currentStep} totalSteps={totalSteps} />
+        <ProgressIndicator 
+          currentStep={currentStep} 
+          totalSteps={totalSteps} 
+          onStepClick={navigateToStep}
+          highestStepReached={highestStepReached}
+        />
 
         {/* Form Container */}
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mt-8">
