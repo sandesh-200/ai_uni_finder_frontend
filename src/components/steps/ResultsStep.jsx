@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react"
 import StepContainer from "../StepContainer"
 import Button from "../Button"
+import CourseDetailModal from "../CourseDetailModal"
 import { courseRecommendationAPI } from "../../services/api"
 
 const ResultsStep = ({ formData, prevStep }) => {
   const [recommendations, setRecommendations] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [selectedCourse, setSelectedCourse] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     fetchRecommendations()
@@ -23,6 +26,16 @@ const ResultsStep = ({ formData, prevStep }) => {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleCourseClick = (course) => {
+    setSelectedCourse(course)
+    setIsModalOpen(true)
+  }
+
+  const closeModal = () => {
+    setIsModalOpen(false)
+    setSelectedCourse(null)
   }
 
   const formatAmount = (amount, currency) => {
@@ -110,9 +123,14 @@ const ResultsStep = ({ formData, prevStep }) => {
 
   const getRelevanceColor = (relevance) => {
     const relevanceNum = parseFloat(relevance.replace('%', ''))
-    if (relevanceNum > -5000) return 'bg-green-100 text-green-800'
-    if (relevanceNum > -8000) return 'bg-yellow-100 text-yellow-800'
+    if (relevanceNum > 80) return 'bg-green-100 text-green-800'
+    if (relevanceNum > 60) return 'bg-yellow-100 text-yellow-800'
     return 'bg-red-100 text-red-800'
+  }
+
+  const getInstitutionLogo = (logoFilename) => {
+    if (!logoFilename) return null
+    return `https://app.adventus.io/publicimages/${logoFilename}`
   }
 
   if (loading) {
@@ -190,13 +208,31 @@ const ResultsStep = ({ formData, prevStep }) => {
               {recommendations.map((rec, index) => (
                 <div
                   key={rec.course._id}
-                  className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 opacity-100"
+                  className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md  duration-200 opacity-100 cursor-pointer hover:scale-[1.02] transition-transform"
+                  onClick={() => handleCourseClick(rec.course)}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h4 className="text-lg font-semibold text-gray-800 mb-2">{rec.course.course_name}</h4>
-                      <p className="text-gray-600 mb-2 font-medium">{rec.course.institution_name}</p>
-                      <p className="text-gray-500 mb-3">{rec.course.institution_city}, {rec.course.institution_country}</p>
+                      {/* Institution Header with Logo */}
+                      <div className="flex items-center gap-6 mb-4">
+                        {rec.course.institution_logo && (
+                          <div className="flex-shrink-0">
+                            <img
+                              src={getInstitutionLogo(rec.course.institution_logo)}
+                              alt={`${rec.course.institution_name} logo`}
+                              className="w-24 h-24 object-contain rounded-xl border-2 border-gray-200 bg-white shadow-sm"
+                              onError={(e) => {
+                                e.target.style.display = 'none'
+                              }}
+                            />
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <h4 className="text-xl font-semibold text-gray-800 mb-2">{rec.course.course_name}</h4>
+                          <p className="text-gray-600 mb-2 font-medium text-lg">{rec.course.institution_name}</p>
+                          <p className="text-gray-500 mb-3">{rec.course.institution_city}, {rec.course.institution_country}</p>
+                        </div>
+                      </div>
                       
                       {rec.course.course_summary && (
                         <p className="text-gray-600 mb-3 text-sm line-clamp-3">
@@ -224,7 +260,6 @@ const ResultsStep = ({ formData, prevStep }) => {
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div>
                           <span className="text-gray-500">Cost:</span>
-                          {/* <p className="font-medium">{formatAmount(rec.course.cost_amount, rec.course.course_cost_currency)}/{rec.course.course_cost_unit}</p> */}
                           <p className="font-medium">{formatAmount(rec.course.cost_amount, rec.course.course_cost_currency)}</p>
                         </div>
                         <div>
@@ -258,6 +293,13 @@ const ResultsStep = ({ formData, prevStep }) => {
           </Button>
         </div>
       </div>
+
+      {/* Course Detail Modal */}
+      <CourseDetailModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        courseData={selectedCourse}
+      />
     </StepContainer>
   )
 }
