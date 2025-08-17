@@ -224,7 +224,8 @@ const ResultsStep = ({ formData, prevStep }) => {
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div>
                           <span className="text-gray-500">Cost:</span>
-                          <p className="font-medium">{formatAmount(rec.course.cost_amount, rec.course.course_cost_currency)}/{rec.course.course_cost_unit}</p>
+                          {/* <p className="font-medium">{formatAmount(rec.course.cost_amount, rec.course.course_cost_currency)}/{rec.course.course_cost_unit}</p> */}
+                          <p className="font-medium">{formatAmount(rec.course.cost_amount, rec.course.course_cost_currency)}</p>
                         </div>
                         <div>
                           <span className="text-gray-500">IELTS:</span>
