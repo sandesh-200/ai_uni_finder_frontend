@@ -3,6 +3,8 @@ import StepContainer from "../StepContainer"
 import Button from "../Button"
 import CourseDetailModal from "../CourseDetailModal"
 import { courseRecommendationAPI } from "../../services/api"
+import { decodeHtmlEntities } from "../../utils/htmlDecoder"
+import { BookOpen, Target, Globe, DollarSign, GraduationCap, FileText } from "lucide-react"
 
 const ResultsStep = ({ formData, prevStep }) => {
   const [recommendations, setRecommendations] = useState([])
@@ -86,16 +88,16 @@ const ResultsStep = ({ formData, prevStep }) => {
       "2_year_post_secondary_diploma": "2 Year Post-Secondary Diploma",
       "1_year_post_secondary_certificate": "1 Year Post-Secondary Certificate"
     }
-    return displayNames[value] || value
+    return decodeHtmlEntities(displayNames[value] || value)
   }
 
   const summaryItems = [
-    { label: "Course", value: formData.course_name, icon: "📚" },
-    { label: "Level", value: formData.level_group, icon: "🎯" },
-    { label: "Country", value: formData.institution_country, icon: "🌍" },
-    { label: "Budget", value: formatAmount(formData.cost_amount, formData.course_cost_currency), icon: "💰" },
-    { label: "Qualification", value: getQualificationDisplayName(formData.minimum_qualification), icon: "🎓" },
-    { label: "English Tests", value: getTestScores(), icon: "📝" },
+    { label: "Course", value: decodeHtmlEntities(formData.course_name), icon: <BookOpen className="w-5 h-5 text-blue-600" /> },
+    { label: "Level", value: decodeHtmlEntities(formData.level_group), icon: <Target className="w-5 h-5 text-purple-600" /> },
+    { label: "Country", value: formData.institution_country, icon: <Globe className="w-5 h-5 text-green-600" /> },
+    { label: "Budget", value: formatAmount(formData.cost_amount, formData.course_cost_currency), icon: <DollarSign className="w-5 h-5 text-yellow-600" /> },
+    { label: "Qualification", value: getQualificationDisplayName(formData.minimum_qualification), icon: <GraduationCap className="w-5 h-5 text-indigo-600" /> },
+    { label: "English Tests", value: getTestScores(), icon: <FileText className="w-5 h-5 text-red-600" /> },
   ]
 
   const handleStartOver = () => {
@@ -186,7 +188,9 @@ const ResultsStep = ({ formData, prevStep }) => {
                 key={item.label}
                 className="flex items-center space-x-3 opacity-100"
               >
-                <span className="text-xl">{item.icon}</span>
+                <div className="flex-shrink-0">
+                  {item.icon}
+                </div>
                 <div>
                   <span className="text-sm text-gray-600">{item.label}:</span>
                   <span className="ml-2 font-medium text-gray-800">{item.value}</span>
@@ -228,15 +232,15 @@ const ResultsStep = ({ formData, prevStep }) => {
                           </div>
                         )}
                         <div className="flex-1">
-                          <h4 className="text-xl font-semibold text-gray-800 mb-2">{rec.course.course_name}</h4>
-                          <p className="text-gray-600 mb-2 font-medium text-lg">{rec.course.institution_name}</p>
-                          <p className="text-gray-500 mb-3">{rec.course.institution_city}, {rec.course.institution_country}</p>
+                          <h4 className="text-xl font-semibold text-gray-800 mb-2">{decodeHtmlEntities(rec.course.course_name)}</h4>
+                          <p className="text-gray-600 mb-2 font-medium text-lg">{decodeHtmlEntities(rec.course.institution_name)}</p>
+                          <p className="text-gray-500 mb-3">{decodeHtmlEntities(rec.course.institution_city)}, {decodeHtmlEntities(rec.course.institution_country)}</p>
                         </div>
                       </div>
                       
                       {rec.course.course_summary && (
                         <p className="text-gray-600 mb-3 text-sm line-clamp-3">
-                          {rec.course.course_summary}
+                          {decodeHtmlEntities(rec.course.course_summary)}
                         </p>
                       )}
 
@@ -245,7 +249,7 @@ const ResultsStep = ({ formData, prevStep }) => {
                           {rec.relevance}
                         </span>
                         <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
-                          {rec.course.level_group}
+                          {decodeHtmlEntities(rec.course.level_group)}
                         </span>
                         <span className="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">
                           {formatDuration(rec.course.course_duration, rec.course.course_duration_unit)}

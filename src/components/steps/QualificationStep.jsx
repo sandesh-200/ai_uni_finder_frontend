@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import StepContainer from "../StepContainer"
 import Button from "../Button"
 
@@ -23,6 +23,17 @@ const QualificationsStep = ({ formData, updateFormData, nextStep, prevStep }) =>
     { key: "toefl_score", name: "TOEFL iBT", maxScore: 120, step: 1 },
     { key: "duolingo_score", name: "Duolingo English Test", maxScore: 160, step: 5 },
   ]
+
+  // Synchronize selectedTests with existing formData when component mounts or formData changes
+  useEffect(() => {
+    const existingTests = new Set()
+    englishTests.forEach(test => {
+      if (formData[test.key] && formData[test.key] !== "") {
+        existingTests.add(test.key)
+      }
+    })
+    setSelectedTests(existingTests)
+  }, [formData])
 
   const handleInputChange = (field, value) => {
     // Validate test scores

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { decodeHtmlEntities } from "../utils/htmlDecoder"
 
 const CourseDetailModal = ({ isOpen, onClose, courseData }) => {
   const [isVisible, setIsVisible] = useState(false)
@@ -106,9 +107,9 @@ const CourseDetailModal = ({ isOpen, onClose, courseData }) => {
                   </div>
                 )}
                 <div className="flex-1">
-                  <h1 className="text-3xl font-bold text-gray-900 mb-3">{courseData.course_name}</h1>
-                  <h2 className="text-xl font-semibold text-gray-700 mb-2">{courseData.institution_name}</h2>
-                  <p className="text-lg text-gray-600 mb-3">{courseData.institution_city}, {courseData.institution_country}</p>
+                  <h1 className="text-3xl font-bold text-gray-900 mb-3">{decodeHtmlEntities(courseData.course_name)}</h1>
+                  <h2 className="text-xl font-semibold text-gray-700 mb-2">{decodeHtmlEntities(courseData.institution_name)}</h2>
+                  <p className="text-lg text-gray-600 mb-3">{decodeHtmlEntities(courseData.institution_city)}, {decodeHtmlEntities(courseData.institution_country)}</p>
                   {courseData.rank && (
                     <div className="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm font-medium">
                       Rank: {courseData.rank}
@@ -121,7 +122,7 @@ const CourseDetailModal = ({ isOpen, onClose, courseData }) => {
               {courseData.course_summary && (
                 <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">Course Overview</h3>
-                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">{courseData.course_summary}</p>
+                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">{decodeHtmlEntities(courseData.course_summary)}</p>
                 </div>
               )}
 
@@ -141,7 +142,7 @@ const CourseDetailModal = ({ isOpen, onClose, courseData }) => {
                     </div>
                     <div className="flex justify-between py-2 border-b border-gray-100">
                       <span className="text-gray-600 font-medium">Delivery</span>
-                      <span className="text-gray-900 capitalize">{courseData.course_delivery}</span>
+                      <span className="text-gray-900 capitalize">{decodeHtmlEntities(courseData.course_delivery)}</span>
                     </div>
                     <div className="flex justify-between py-2">
                       <span className="text-gray-600 font-medium">Cost</span>
@@ -158,7 +159,7 @@ const CourseDetailModal = ({ isOpen, onClose, courseData }) => {
                   <div className="space-y-3">
                     <div className="flex justify-between py-2 border-b border-gray-100">
                       <span className="text-gray-600 font-medium">Qualification</span>
-                      <span className="text-gray-900">{courseData.min_qualification}</span>
+                      <span className="text-gray-900">{decodeHtmlEntities(courseData.min_qualification)}</span>
                     </div>
                     <div className="flex justify-between py-2 border-b border-gray-100">
                       <span className="text-gray-600 font-medium">IELTS</span>
@@ -187,7 +188,7 @@ const CourseDetailModal = ({ isOpen, onClose, courseData }) => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {courseData.intakes.map((intake, index) => (
                       <div key={intake.id} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <h4 className="font-semibold text-gray-900 mb-3">{intake.name}</h4>
+                        <h4 className="font-semibold text-gray-900 mb-3">{decodeHtmlEntities(intake.name)}</h4>
                         <div className="space-y-2 text-sm">
                           <div className="flex justify-between">
                             <span className="text-gray-600">Application Opens</span>
@@ -223,7 +224,7 @@ const CourseDetailModal = ({ isOpen, onClose, courseData }) => {
                     {courseData.careers_offered && courseData.careers_offered !== 'null' && (
                       <div className="pt-2">
                         <span className="text-gray-600 font-medium">Careers</span>
-                        <p className="text-gray-900 mt-1">{courseData.careers_offered}</p>
+                        <p className="text-gray-900 mt-1">{decodeHtmlEntities(courseData.careers_offered)}</p>
                       </div>
                     )}
                   </div>
